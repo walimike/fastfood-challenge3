@@ -1,0 +1,5 @@
+api/__pycache__/
+venv/
+tests/__pycache__
+.vscode/
+.coverage
