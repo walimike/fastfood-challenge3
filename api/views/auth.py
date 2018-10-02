@@ -5,9 +5,9 @@ from api.models.models import User
 import re
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
+from api.views import app
 
-app = create_app(config_name='development')
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+app.config['JWT_SECRET_KEY'] = 'walimike' 
 jwt = JWTManager(app)
 
 """This route provides a welcome message for our api"""
@@ -20,8 +20,7 @@ def index():
 @jwt_required
 def signup():
     """{"name":"","password":"","role":""}"""
-    if not request.json or not 'name' in request.json or not 'password' in
-    request.json or not 'role' in request.json:
+    if not request.json or not 'name' in request.json or not 'password' in request.json or not 'role' in request.json:
         error (400)
 
     if not isinstance(request.json.get('name'), str):
