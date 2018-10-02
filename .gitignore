@@ -1,7 +1,0 @@
-api/views/__pycache__/
-api/__pycache__/
-venv/
-tests/__pycache__
-.vscode/
-.coverage
-api/models/__pycache__/
