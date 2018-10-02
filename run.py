@@ -1,4 +1,4 @@
-from api.views import app
+from api import app
 from api.models.dbcontroller import DbController
 
 if __name__ == '__main__':
