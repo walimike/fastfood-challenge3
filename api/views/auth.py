@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
-from api import create_app
+##from api import create_app
+from api import app
 from api.models.dbcontroller import DbController
 from api.models.models import User
 import re
