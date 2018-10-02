@@ -39,14 +39,13 @@ class DbController:
 	def add_user(self,new_user):
 		query = "INSERT INTO users (username, password, role) VALUES (%s, %s, %s);"
 		self.cursor.execute(query, (new_user.name, new_user.password, new_user.role))
-
+		
 	def add_food_to_menu(self, foodname, price):
-		query = "INSERT INTO menu (foodname, price) VALUES ('{}', '{}');"\
-			.format(foodname, price)
-		self.cursor.execute(query)
+		query = "INSERT INTO menu (foodname, price) VALUES (%s, %s)"
+		self.cursor.execute(query, (foodname, price))
 
 	def get_orders(self):
-		query = "SELECT row_to_json(row) FROM (SELECT * FROM orders) row;"
+		query = "SELECT row_to_json(row) FROM (SELECT * FROM menu) row;"
 		self.cursor.execute(query)
 		orders = self.cursor.fetchall()
 		return orders

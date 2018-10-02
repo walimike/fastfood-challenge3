@@ -1,12 +1,11 @@
 from flask import Flask, jsonify, request
-##from api import create_app
 from api import app
 from api.models.dbcontroller import DbController
 from api.models.models import User
 import re
 from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
-from api.views import app
+from api import app
 
 
 app.config['JWT_SECRET_KEY'] = 'walimike' 
