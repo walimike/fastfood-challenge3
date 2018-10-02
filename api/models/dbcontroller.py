@@ -1,6 +1,7 @@
 import psycopg2
 
-class DatabaseConnection:
+
+class DbController:
 	def __init__(self):
 		connection_credentials = """
 				dbname='walimike' user='postgres' password='1234'
@@ -21,8 +22,7 @@ class DatabaseConnection:
 		""" Create all database tables"""
 
 		create_table = "CREATE TABLE IF NOT EXISTS users \
-			( user_id SERIAL PRIMARY KEY, username VARCHAR(10), \
-			email VARCHAR(100), password VARCHAR(100), admin BOOLEAN NOT NULL);"
+			( user_id SERIAL PRIMARY KEY, username VARCHAR(10),	password VARCHAR(100), role VARCHAR(10));"
 		self.cursor.execute(create_table)
 
 		create_table = "CREATE TABLE IF NOT EXISTS menu \
@@ -36,11 +36,9 @@ class DatabaseConnection:
 			quantity INTEGER, status VARCHAR(10));"
 		self.cursor.execute(create_table)	
 
-
-	def add_user(self, user):
-		query = "INSERT INTO users (username, password, type) VALUES\
-			('{}', '{}', '{}', '{}');".format(user.name, user.password, user.type)
-		self.cursor.execute(query)
+	def add_user(self,new_user):
+		query = "INSERT INTO users (username, password, role) VALUES (%s, %s, %s);"
+		self.cursor.execute(query, (new_user.name, new_user.password, new_user.role))
 
 	def add_food_to_menu(self, foodname, price):
 		query = "INSERT INTO menu (foodname, price) VALUES ('{}', '{}');"\
@@ -97,4 +95,3 @@ class DatabaseConnection:
 		query = "DROP TABLE orders;DROP TABLE menu;DROP TABLE users; "
 		self.cursor.execute(query)
 		return "Droped"
-
