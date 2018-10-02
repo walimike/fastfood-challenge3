@@ -17,11 +17,10 @@ def index():
 
 """This route is for user signup/in"""
 @app.route('/v2/auth/signup', methods=['POST'])
-@jwt_required
 def signup():
     """{"name":"","password":"","role":""}"""
-    if not request.json or not 'name' in request.json or not 'password' in request.json or not 'role' in request.json:
-        error (400)
+    #if not request.json or not 'name' in request.json or not 'password' in request.json or not 'role' in request.json:
+     #   error (400)
 
     if not isinstance(request.json.get('name'), str):
         return jsonify({"msg": "Name must be a string. Example: johndoe"}), 400
@@ -53,5 +52,6 @@ def signup():
 
         new_user = User(name, password, role)
         DbController().add_user(new_user)
+        return jsonify({"msg":DbController().get_users()})
 
     return jsonify({"msg": "empty field"}), 400

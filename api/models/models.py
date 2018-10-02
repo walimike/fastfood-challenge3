@@ -9,5 +9,5 @@ class User:
 
 class Order:
 
-    def __init__(self):
+    def __init__(self,food):
         self.food = food        
