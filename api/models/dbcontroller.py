@@ -1,5 +1,6 @@
 import psycopg2
 
+
 class DbController:
 	def __init__(self):
 		connection_credentials = """
@@ -34,7 +35,6 @@ class DbController:
 			food_id INTEGER NOT NULL REFERENCES menu(food_id), \
 			quantity INTEGER, status VARCHAR(10));"
 		self.cursor.execute(create_table)	
-
 
 	def add_user(self,new_user):
 		query = "INSERT INTO users (username, password, role) VALUES (%s, %s, %s);"
@@ -95,5 +95,3 @@ class DbController:
 		query = "DROP TABLE orders;DROP TABLE menu;DROP TABLE users; "
 		self.cursor.execute(query)
 		return "Droped"
-
-#DbController().add_user('wali','123456789','admin')

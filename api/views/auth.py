@@ -7,6 +7,7 @@ from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 from api.views import app
 
+
 app.config['JWT_SECRET_KEY'] = 'walimike' 
 jwt = JWTManager(app)
 
