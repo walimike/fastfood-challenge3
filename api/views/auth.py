@@ -7,6 +7,8 @@ from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 
 app = create_app(config_name='development')
+app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+jwt = JWTManager(app)
 
 """This route provides a welcome message for our api"""
 @app.route('/')
@@ -15,6 +17,7 @@ def index():
 
 """This route is for user signup/in"""
 @app.route('/v2/auth/signup', methods=['POST'])
+@jwt_required
 def signup():
     """{"name":"","password":"","role":""}"""
     if not request.json or not 'name' in request.json or not 'password' in
