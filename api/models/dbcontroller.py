@@ -1,60 +1,100 @@
 import psycopg2
-from pprint import pprint
+
+class DatabaseConnection:
+	def __init__(self):
+		connection_credentials = """
+				dbname='walimike' user='postgres' password='1234'
+	            host='localhost' port='5432'
+				"""
+		try:
+			self.connection = psycopg2.connect(connection_credentials)
+			self.connection.autocommit = True
+			self.cursor = self.connection.cursor()
+
+		except Exception as e:
+			print(e)
+			print('Failed to connect to db')
 
 
-class DbController:
-    """
-    Class initiates connection to Data Base.
-    """
-    def __init__(self):
-        try:
-            self.connection = pscycop2.connect(user = "postgres",
-                                    password = "1234",
-                                    host = "127.0.0.1",
-                                    port = "5432",
-                                    database = "walimike")
-            self.connection.autocommit = True
-            self.cursor = self.connection.cursor()
-        except:
-            pprint("Can not connect to database")
+	def create_tables(self):
 
-    def create_tables(self):
-        """Method creates tables."""
-        user_table = "CREATE TABLE IF NOT EXISTS user_table(usrId serial PRIMARY KEY,\
-          username varchar(50), password varchar(20), role varchar(15))"
-        orders_table = "CREATE TABLE IF NOT EXISTS orders_table(orderId serial PRIMARY KEY,\
-          item varchar(100), price integer, order_status varchar(20), client varchar(50))"
-        menu_table = "CREATE TABLE IF NOT EXISTS menu_table(menuid serial PRIMARY KEY,\
-         item varchar(100),  price integer)"
-        self.cursor.execute(user_table)
-        self.cursor.execute(orders_table)
-        self.cursor.execute(menu_table)
+		""" Create all database tables"""
 
-    def drop_tables(self):
-        """Method drops tables."""
-        drop_user_table = "DROP TABLE users cascade"
-        drop_orders_table = "DROP TABLE orders cascade"
-        drop_menu_table = "DROP TABLE menu cascade"
-        self.cursor.execute(drop_user_table)
-        self.cursor.execute(drop_orders_table)
-        self.cursor.execute(drop_menu_table)
+		create_table = "CREATE TABLE IF NOT EXISTS users \
+			( user_id SERIAL PRIMARY KEY, username VARCHAR(10), \
+			email VARCHAR(100), password VARCHAR(100), admin BOOLEAN NOT NULL);"
+		self.cursor.execute(create_table)
 
-    def add_user(self,user):
-        username, password,role = user.name, user.password, user.role
-        add_user=("INSERT INTO user_table VALUES (%s, %s, %s, %s)", (1,"username","password","role"))
-        self.cursor.execute(add_user))
+		create_table = "CREATE TABLE IF NOT EXISTS menu \
+			( food_id SERIAL PRIMARY KEY, foodname VARCHAR(15), price INTEGER);"
+		self.cursor.execute(create_table)
 
-    def add_order(self,order):
-        orderid, ordername, price = 1, order.name, order.price
-        add_order=("INSERT INTO orders_table VALUES (%s, %s, %s)", ("orderid","ordername","price"))
-        self.cursor.execute(add_user))
+		create_table = "CREATE TABLE IF NOT EXISTS orders \
+			( order_id SERIAL PRIMARY KEY, \
+			user_id INTEGER NOT NULL REFERENCES users(user_id), \
+			food_id INTEGER NOT NULL REFERENCES menu(food_id), \
+			quantity INTEGER, status VARCHAR(10));"
+		self.cursor.execute(create_table)	
 
-    def add_to_menu(self,food_item):
-        foodid, food, price = 1, food_item.name, food_item.price
-        add_user=("INSERT INTO user_table VALUES (%s, %s, %s, %s)", (1,"username","password","role"))
-        self.cursor.execute(add_user))
 
-    def get_element_by_id(self, id, table):
-        self.cursor.execute("SELECT * from (%s)",("table")
-        data = self.cursor.fetchone(table)
-        return data
+	def add_user(self, user):
+		query = "INSERT INTO users (username, password, type) VALUES\
+			('{}', '{}', '{}', '{}');".format(user.name, user.password, user.type)
+		self.cursor.execute(query)
+
+	def add_food_to_menu(self, foodname, price):
+		query = "INSERT INTO menu (foodname, price) VALUES ('{}', '{}');"\
+			.format(foodname, price)
+		self.cursor.execute(query)
+
+	def get_orders(self):
+		query = "SELECT row_to_json(row) FROM (SELECT * FROM orders) row;"
+		self.cursor.execute(query)
+		orders = self.cursor.fetchall()
+		return orders
+
+	def get_users(self):
+		query = "SELECT row_to_json(row) FROM (SELECT * FROM users) row;"
+		self.cursor.execute(query)
+		users = self.cursor.fetchall()
+		return users
+
+	def get_menu(self):
+		query = "SELECT row_to_json(row) FROM (SELECT * FROM ) row; "
+		self.cursor.execute(query)
+		menu = self.cursor.fetchall()
+		return menu
+
+	def get_an_order(self, column, value):
+		query = "SELECT * FROM orders WHERE {} = '{}';".format(column, value)
+		self.cursor.execute(query)
+		user = self.cursor.fetchone()
+		return user
+
+	def get_user(self, column, value):
+		query = "SELECT  row_to_json (row) FROM (users WHERE {} = '{}') row;".format(column, value)
+		self.cursor.execute(query)
+		user = self.cursor.fetchone()
+		return user
+
+	def place_order(self, user_id, food_id, quantity):
+		query = "INSERT INTO orders (user_id, food_id, quantity, status) \
+			VALUES ('{}', '{}', '{}', 'pending');".format(user_id, food_id, quantity)
+		self.cursor.execute(query)
+
+	def update_status(self, order_id, status):
+		query = "UPDATE orders SET status = '{}' WHERE order_id = '{}';\
+		".format(status, order_id)
+		self.cursor.execute(query)
+
+	def get_history_by_userid(self, userid):
+		query = "SELECT * FROM orders WHERE user_id = '{}';".format(userid)
+		self.cursor.execute(query)
+		history = self.cursor.fetchall()
+		return history
+		
+	def drop_tables(self):
+		query = "DROP TABLE orders;DROP TABLE menu;DROP TABLE users; "
+		self.cursor.execute(query)
+		return "Droped"
+
