@@ -1,6 +1,7 @@
-api/views/__pycache__/auth.cpython-35.pyc
+api/views/__pycache__/
 api/__pycache__/
 venv/
 tests/__pycache__
 .vscode/
 .coverage
+api/models/__pycache__/
