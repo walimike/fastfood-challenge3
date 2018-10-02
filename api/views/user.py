@@ -24,6 +24,16 @@ def make_order():
     return jsonify({"orders":order})    
 
 
+@app.route('/v2/user/orders/<int:user_id>',methods=['GET'])
+def view_history(user_id):
+    if not user_id:
+        abort (404)
+    return jsonify({"History":DbController().get_history_by_userid(user_id)})
+
 @app.errorhandler(400)
 def bad_request(error):
+    return make_response(jsonify( { 'error': 'Bad request' } ), 400)
+
+@app.errorhandler(404)
+def not_found(error):
     return make_response(jsonify( { 'error': 'Bad request' } ), 400)
