@@ -41,10 +41,20 @@ class DbController:
 
     def add_user(self,user):
         username, password,role = user.name, user.password, user.role
-        add_user="INSERT INTO user_table VALUES({} {} {} {})".format(1,username,password,role)
+        add_user=("INSERT INTO user_table VALUES (%s, %s, %s, %s)", (1,"username","password","role"))
+        self.cursor.execute(add_user))
 
+    def add_order(self,order):
+        orderid, ordername, price = 1, order.name, order.price
+        add_order=("INSERT INTO orders_table VALUES (%s, %s, %s)", ("orderid","ordername","price"))
+        self.cursor.execute(add_user))
+
+    def add_to_menu(self,food_item):
+        foodid, food, price = 1, food_item.name, food_item.price
+        add_user=("INSERT INTO user_table VALUES (%s, %s, %s, %s)", (1,"username","password","role"))
+        self.cursor.execute(add_user))
 
     def get_element_by_id(self, id, table):
-        self.cursor.execute("SELECT * from {}".format(table))
+        self.cursor.execute("SELECT * from (%s)",("table")
         data = self.cursor.fetchone(table)
         return data
