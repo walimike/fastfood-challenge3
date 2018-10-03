@@ -57,7 +57,7 @@ class DbController:
 		return users
 
 	def get_menu(self):
-		query = "SELECT row_to_json(row) FROM (SELECT * FROM ) row; "
+		query = "SELECT row_to_json(row) FROM (SELECT * FROM menu) row; "
 		self.cursor.execute(query)
 		menu = self.cursor.fetchall()
 		return menu
@@ -91,6 +91,6 @@ class DbController:
 		return history
 		
 	def drop_tables(self):
-		query = "DROP TABLE orders;DROP TABLE menu;DROP TABLE users; "
+		query = "DROP TABLE IF EXISTS orders;DROP TABLE IF EXISTS menu;DROP TABLE IF EXISTS users; "
 		self.cursor.execute(query)
 		return "Droped"
