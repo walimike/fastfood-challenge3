@@ -22,6 +22,13 @@ def add_item_to_menu():
     menu = DbController().get_menu()
     return jsonify({"menu":menu})
 
+@app.route('/v2/admin/orders/<int:order_id>', methods=['GET'])
+def get_specific_order(order_id):
+    if not order_id or type(order_id) != int:
+        abort(400)
+    specific_order = DbController().get_an_order(order_id,order_id)    
+    return jsonify({"orders":specific_order})    
+
 @app.route('/v2/orders/<int:order_id>', methods=['PUT'])
 def update_order(order_id):
     if not type(order_id)==int:
@@ -38,6 +45,7 @@ def update_order(order_id):
             return({"Error":"Status can only be complete or incomplete"})
     DbController().update_status(order_id,new_status)
     return jsonify({'orders':DbController().get_orders()})    
+
 
 @app.errorhandler(404)
 def not_found(error):
