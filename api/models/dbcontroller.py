@@ -31,8 +31,6 @@ class DbController:
 
 		create_table = "CREATE TABLE IF NOT EXISTS orders \
 			( order_id SERIAL PRIMARY KEY, \
-			user_id INTEGER NOT NULL REFERENCES users(user_id), \
-			food_id INTEGER NOT NULL REFERENCES menu(food_id), \
 			quantity INTEGER, status VARCHAR(10));"
 		self.cursor.execute(create_table)	
 
@@ -45,7 +43,7 @@ class DbController:
 		self.cursor.execute(query, (foodname, price))
 
 	def get_orders(self):
-		query = "SELECT row_to_json(row) FROM (SELECT * FROM menu) row;"
+		query = "SELECT row_to_json(row) FROM (SELECT * FROM orders) row;"
 		self.cursor.execute(query)
 		orders = self.cursor.fetchall()
 		return orders
