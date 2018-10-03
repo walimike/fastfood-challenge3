@@ -21,7 +21,11 @@ def make_order():
         return jsonify({"msg": "order field is empty"}), 400
     DbController().add_food_to_menu(order,price)    
     order = DbController().get_orders()
-    return jsonify({"orders":order})    
+    return jsonify({"orders":order})  
+
+@app.route('/v2/user/orders',methods=['GET'])
+def get_menu():
+    return jsonify({"Menu":DbController().get_menu()}) 
 
 
 @app.route('/v2/user/orders/<int:user_id>',methods=['GET'])
