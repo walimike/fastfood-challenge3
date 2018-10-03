@@ -10,4 +10,5 @@ class User:
 class Order:
 
     def __init__(self,food):
-        self.food = food        
+        self.food = food  
+        self.status = "Incomplete"      

@@ -22,6 +22,23 @@ def add_item_to_menu():
     menu = DbController().get_menu()
     return jsonify({"menu":menu})
 
+@app.route('/v2/orders/<int:order_id>', methods=['PUT'])
+def update_order(order_id):
+    if not type(order_id)==int:
+        abort(400)
+
+    """checks the the json data is in the right format and has the right key word"""    
+    if not request.json or not 'completed_status' in request.json:
+        abort(400)      
+    new_status =  request.get_json()['completed_status']
+
+    """checks that our completed status is either yes or no"""    
+    if new_status.lower() != "complete":
+        if new_status.lower() != "incomplete":
+            return({"Error":"Status can only be complete or incomplete"})
+    DbController().update_status(order_id,new_status)
+    return jsonify({'orders':DbController().get_orders()})    
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify( { 'error': 'Bad request' } ), 404)    
