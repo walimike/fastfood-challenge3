@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from api import app
 from api.models.dbcontroller import DbController
 from api.models.models import User
@@ -20,8 +20,8 @@ def index():
 @app.route('/v2/auth/signup', methods=['POST'])
 def signup():
     """{"name":"","password":"","role":""}"""
-    #if not request.json or not 'name' in request.json or not 'password' in request.json or not 'role' in request.json:
-     #   error (400)
+    if not request.json or not 'name' in request.json or not 'password' in request.json or not 'role' in request.json:
+        abort (400)
 
     if not isinstance(request.json.get('name'), str):
         return jsonify({"msg": "Name must be a string. Example: johndoe"}), 400
