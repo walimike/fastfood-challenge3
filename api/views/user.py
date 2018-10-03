@@ -19,7 +19,7 @@ def make_order():
     price = request.get_json()['price']
     if not price:
         return jsonify({"msg": "order field is empty"}), 400
-    DbController().add_food_to_menu(order,price)    
+    DbController().place_order(order,price,"Incomplete")    
     order = DbController().get_orders()
     return jsonify({"orders":order})  
 

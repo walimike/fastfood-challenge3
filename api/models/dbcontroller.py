@@ -31,9 +31,8 @@ class DbController:
 
 		create_table = "CREATE TABLE IF NOT EXISTS orders \
 			( order_id SERIAL PRIMARY KEY, \
-			user_id INTEGER NOT NULL REFERENCES users(user_id), \
-			food_id INTEGER NOT NULL REFERENCES menu(food_id), \
-			quantity INTEGER, status VARCHAR(10));"
+			user_id INTEGER REFERENCES users(user_id), \
+			foodname VARCHAR(20), price VARCHAR(20), status VARCHAR(10));"
 		self.cursor.execute(create_table)	
 
 	def add_user(self,new_user):
@@ -45,7 +44,7 @@ class DbController:
 		self.cursor.execute(query, (foodname, price))
 
 	def get_orders(self):
-		query = "SELECT row_to_json(row) FROM (SELECT * FROM menu) row;"
+		query = "SELECT row_to_json(row) FROM (SELECT * FROM orders) row;"
 		self.cursor.execute(query)
 		orders = self.cursor.fetchall()
 		return orders
@@ -74,10 +73,9 @@ class DbController:
 		user = self.cursor.fetchone()
 		return user
 
-	def place_order(self, user_id, food_id, quantity):
-		query = "INSERT INTO orders (user_id, food_id, quantity, status) \
-			VALUES ('{}', '{}', '{}', 'pending');".format(user_id, food_id, quantity)
-		self.cursor.execute(query)
+	def place_order(self, foodname,price,status):
+		query = "INSERT INTO orders (foodname, price, status) VALUES (%s, %s, %s)"
+		self.cursor.execute(query, (foodname, price, status))
 
 	def update_status(self, order_id, status):
 		query = "UPDATE orders SET status = '{}' WHERE order_id = '{}';\
