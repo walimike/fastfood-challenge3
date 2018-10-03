@@ -3,13 +3,11 @@ from api import app
 from api.models.dbcontroller import DbController
 from api.models.models import User
 import re
-from flask_jwt_extended import (JWTManager, create_access_token,
-                                get_jwt_identity, jwt_required)
 from api import app
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity)
 
-
-app.config['JWT_SECRET_KEY'] = 'walimike' 
-jwt = JWTManager(app)
 
 """This route provides a welcome message for our api"""
 @app.route('/')
@@ -24,7 +22,7 @@ def signup():
         abort (400)
 
     if not isinstance(request.json.get('name'), str):
-        return jsonify({"msg": "Name must be a string. Example: johndoe"}), 400
+        return jsonify({"msg": "Name must be a string."}), 400
 
     name = request.get_json()['name'].strip()
     if not name:
@@ -56,3 +54,24 @@ def signup():
         return jsonify({"msg":DbController().get_users()})
 
     return jsonify({"msg": "empty field"}), 400
+
+
+@app.route('/v2/auth/login', methods=['POST'])
+def login():
+    """{"name":"","password":"","role":""}"""
+    if not request.json or not 'name' in request.json or not 'password' in request.json:
+        abort (400)
+
+    if not isinstance(request.json.get('name'), str):
+        return jsonify({"msg": "Name must be a string."}), 400
+
+    name = request.get_json()['name'].strip()
+    if not name:
+        return jsonify({"msg": "Name field is empty"}), 400
+    password = str(request.get_json()['password']).strip()
+    if not password:
+        return jsonify({"msg": "Password field is empty"}), 400   
+    if not name:
+        abort (404)    
+    access_token = create_access_token(identity=name)
+    return jsonify(access_token=access_token), 200      

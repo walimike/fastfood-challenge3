@@ -10,7 +10,9 @@ class EndpointsTestCase(unittest.TestCase):
     """
     def setUp(self):
         self.client = app.test_client()
-        self.db = DbController().get_users()
+
+    def tearDown(self):
+        DbController().drop_tables()
 
     def test_can_display_message(self):
         """Tests whether endpoint displays welcome message"""
@@ -19,17 +21,18 @@ class EndpointsTestCase(unittest.TestCase):
 
     def test_can_signup(self):
         test_signup = {"name":"wali","password":"@br@h@m1234","role":"admin"}
-        response = self.client.post(/v2/auth/signup, json = test_signup)
-        self.assertEqual(response.status_code,201)
-        result = DbController().get_element_by_id(1,user_table)
+        response = self.client.post('/v2/auth/signup', json = test_signup)
+        self.assertEqual(response.status_code,200)
+        new_user = DbController().get_users()
+        self.assertEqual(new_user['username'],'wali')
 
     def test_can_isolate_errors(self):
-        response = self.client.post(/v2/auth/signup, json = {"name":"",
+        response = self.client.post('/v2/auth/signup', json = {"name":"",
         "password":"@br@h@m1234","role":"admin"})
         self.assertEqual(response.status_code,400)
-        response2 = self.client.post(/v2/auth/signup, json = {"name":"wali",
+        response2 = self.client.post('/v2/auth/signup', json = {"name":"wali",
         "password":"@br","role":"admin"})
         self.assertEqual(response2.status_code,400)
-        response = self.client.post(/v2/auth/signup, json = {"name":"wali",
+        response = self.client.post('/v2/auth/signup', json = {"name":"wali",
         "password":"@br@h@m1234","role":"admins"})
-        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.status_code,200)

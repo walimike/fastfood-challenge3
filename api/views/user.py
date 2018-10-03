@@ -2,9 +2,14 @@ from flask import Flask,jsonify, request, abort, make_response
 from api.models.dbcontroller import DbController
 from api import app
 from api.models.models import User
+from flask_jwt_extended import (JWTManager, create_access_token,
+                                get_jwt_identity, jwt_required)
 
-@app.route('/v2/user/orders',methods=['POST'])
+
+@app.route('/v2/user/order',methods=['POST'])
+#@jwt_required
 def make_order():
+    """{"order":"","price":""}"""
     if not request.json or not 'order' in request.json or not 'price' in request.json:
         abort (400)
 
@@ -23,12 +28,14 @@ def make_order():
     order = DbController().get_orders()
     return jsonify({"orders":order})  
 
-@app.route('/v2/user/orders',methods=['GET'])
+@app.route('/v2/user/menu',methods=['GET'])
+#@jwt_required
 def get_menu():
     return jsonify({"Menu":DbController().get_menu()}) 
 
 
-@app.route('/v2/user/orders/<int:user_id>',methods=['GET'])
+@app.route('/v2/user/orders/',methods=['GET'])
+#@jwt_required
 def view_history(user_id):
     if not user_id:
         abort (404)
@@ -40,4 +47,4 @@ def bad_request(error):
 
 @app.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify( { 'error': 'Bad request' } ), 404)
+    return make_response(jsonify( { 'error': 'Not found' } ), 404)

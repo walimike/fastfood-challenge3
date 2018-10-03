@@ -2,14 +2,19 @@ from flask import Flask,jsonify,json,request,abort,make_response
 from api.models.dbcontroller import DbController
 from api import app
 from api.models.models import User
+from flask_jwt_extended import (JWTManager, create_access_token,
+                                get_jwt_identity, jwt_required)
 
 
-@app.route('/v2/admin/menu', methods=['GET'])
+@app.route('/v2/admin/orders', methods=['GET'])
+#@jwt_required
 def get_orders():
     return jsonify({"orders":DbController().get_orders()})
 
 @app.route('/v2/admin/menu', methods=['POST'])
-def add_item_to_menu():   
+#@jwt_required
+def add_item_to_menu(): 
+    """{"order":"","price":""}"""  
     if not request.get_json() or not 'order' in request.get_json() or not 'price' in request.get_json():
         abort (404)
     order = request.get_json()['order'].strip()
@@ -23,13 +28,15 @@ def add_item_to_menu():
     return jsonify({"menu":menu})
 
 @app.route('/v2/admin/orders/<int:order_id>', methods=['GET'])
+#@jwt_required
 def get_specific_order(order_id):
     if not order_id or type(order_id) != int:
         abort(400)
     specific_order = DbController().get_an_order(order_id,order_id)    
     return jsonify({"orders":specific_order})    
 
-@app.route('/v2/orders/<int:order_id>', methods=['PUT'])
+@app.route('/v2/admin/orders/<int:order_id>', methods=['PUT'])
+#@jwt_required
 def update_order(order_id):
     if not type(order_id)==int:
         abort(400)
