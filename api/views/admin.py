@@ -6,12 +6,12 @@ from flask_jwt_extended import (JWTManager, create_access_token,
                                 get_jwt_identity, jwt_required)
 
 
-@app.route('/v2/admin/orders', methods=['GET'])
+@app.route('/orders', methods=['GET'])
 #@jwt_required
 def get_orders():
     return jsonify({"orders":DbController().get_orders()})
 
-@app.route('/v2/admin/menu', methods=['POST'])
+@app.route('/menu', methods=['POST'])
 #@jwt_required
 def add_item_to_menu(): 
     """{"order":"","price":""}"""  
@@ -27,7 +27,7 @@ def add_item_to_menu():
     menu = DbController().get_menu()
     return jsonify({"menu":menu})
 
-@app.route('/v2/admin/orders/<int:order_id>', methods=['GET'])
+@app.route('/orders/<int:order_id>', methods=['GET'])
 #@jwt_required
 def get_specific_order(order_id):
     if not order_id or type(order_id) != int:
@@ -35,7 +35,7 @@ def get_specific_order(order_id):
     specific_order = DbController().get_an_order(order_id,order_id)    
     return jsonify({"orders":specific_order})    
 
-@app.route('/v2/admin/orders/<int:order_id>', methods=['PUT'])
+@app.route('/orders/<int:order_id>', methods=['PUT'])
 #@jwt_required
 def update_order(order_id):
     if not type(order_id)==int:

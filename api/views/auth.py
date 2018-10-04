@@ -15,7 +15,7 @@ def index():
     return "<h1> Welcome to Fast Food Fast </h1>"
 
 """This route is for user signup/in"""
-@app.route('/v2/auth/signup', methods=['POST'])
+@app.route('/auth/signup', methods=['POST'])
 def signup():
     """{"name":"","password":"","role":""}"""
     if not request.json or not 'name' in request.json or not 'password' in request.json or not 'role' in request.json:
@@ -56,7 +56,7 @@ def signup():
     return jsonify({"msg": "empty field"}), 400
 
 
-@app.route('/v2/auth/login', methods=['POST'])
+@app.route('/auth/login', methods=['POST'])
 def login():
     """{"name":"","password":"","role":""}"""
     if not request.json or not 'name' in request.json or not 'password' in request.json:
