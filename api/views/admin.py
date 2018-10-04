@@ -11,7 +11,8 @@ def get_orders():
     identity = get_jwt_identity()[0]['username']
     if identity != 'superman':
         return jsonify({"Not authorized":"You do not have this access"}),401
-    return jsonify({"orders":db.get_orders})
+    return jsonify({"orders":db.get_orders()})
+    #return jsonify({"orders":db.get_orders})
 
 @app.route('/menu', methods=['POST'])
 @jwt_required
@@ -35,6 +36,9 @@ def add_item_to_menu():
 @app.route('/orders/<int:order_id>', methods=['GET'])
 @jwt_required
 def get_specific_order(order_id):
+    identity = get_jwt_identity()[0]['username']
+    if identity != 'superman':
+        return jsonify({"Not authorized":"You do not have this access"}),401
     if not order_id or type(order_id) != int:
         abort(400)
     specific_order = db.get_an_order(order_id,order_id)    
@@ -43,6 +47,9 @@ def get_specific_order(order_id):
 @app.route('/orders/<int:order_id>', methods=['PUT'])
 @jwt_required
 def update_order(order_id):
+    identity = get_jwt_identity()[0]['username']
+    if identity != 'superman':
+        return jsonify({"Not authorized":"You do not have this access"}),401
     if not type(order_id)==int:
         abort(400)
 

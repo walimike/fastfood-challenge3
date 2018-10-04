@@ -17,22 +17,21 @@ class DbController:
 		except Exception as e:
 			print(e)
 			print('Failed to connect to db')
-
+			
 
 	def create_tables(self):
 
 		""" Create all database tables"""
 
-		create_table = "CREATE TABLE IF NOT EXISTS users \
-			( user_id SERIAL PRIMARY KEY, username VARCHAR(10),	password VARCHAR(100), role VARCHAR(10));"
+		create_table = "CREATE TABLE IF NOT EXISTS users ( user_id SERIAL PRIMARY KEY,\
+		 username VARCHAR(10),	password VARCHAR(100), role VARCHAR(10));"
 		self.cursor.execute(create_table)
 
 		create_table = "CREATE TABLE IF NOT EXISTS menu \
 			( food_id SERIAL PRIMARY KEY, foodname VARCHAR(15), price INTEGER);"
 		self.cursor.execute(create_table)
 
-		create_table = "CREATE TABLE IF NOT EXISTS orders \
-			( order_id SERIAL PRIMARY KEY, \
+		create_table = "CREATE TABLE IF NOT EXISTS orders ( order_id SERIAL PRIMARY KEY, \
 			user_id INTEGER REFERENCES users(user_id), \
 			foodname VARCHAR(20), price VARCHAR(20), status VARCHAR(10), username VARCHAR(20));"
 		self.cursor.execute(create_table)	
@@ -91,11 +90,12 @@ class DbController:
 		history = self.cursor.fetchall()
 		return history
 
-	#def get_user_role(self,name):
-	#	query = "SELECT role FROM users WHERE username = '{}';".format(name)	
-	#	self.cursor.execute(query)
-	#	role = self.cursor.fetchone()
-	#	return role
+	def search_for_order(self, order):
+		query = "SELECT foodname FROM orders WHERE foodname = '{}';".format(order)
+		self.cursor.execute(query)
+		order = self.cursor.fetchone()
+		return order
+
 
 	def drop_tables(self):
 		query = "DROP TABLE IF EXISTS orders;DROP TABLE IF EXISTS menu;DROP TABLE IF EXISTS users; "

@@ -30,9 +30,8 @@ def signup():
     role = request.get_json()['role']
     if not role:
         return jsonify({"msg":"Role field is empty"}), 400
-    if role.lower() != "admin":
-        if role.lower() != "user":
-            return jsonify({"Error":"Only 'admin' or 'user' roles exist"})
+    if role.lower() != "user":
+        return jsonify({"Error":"Only 'user' roles exist"})
 
     if name and password and role:
         if len(name) > 15:
@@ -51,7 +50,7 @@ def signup():
             return jsonify({"Error":"User already exists"})
         new_user = User(name, password, role)
         db.add_user(new_user)
-        return jsonify({"msg":db.get_users()})
+        return jsonify({"Message":"You have successfully signed up."})
 
     return jsonify({"msg": "empty field"}), 400
 

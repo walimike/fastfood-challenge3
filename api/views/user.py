@@ -8,6 +8,7 @@ from flask_jwt_extended import (JWTManager, create_access_token,
 @app.route('/users/orders',methods=['POST'])
 @jwt_required
 def make_order():
+    identity = get_jwt_identity()[0]['username']
     """{"order":"","price":""}"""
     if not request.json or not 'order' in request.json or not 'price' in request.json:
         abort (400)
@@ -23,17 +24,20 @@ def make_order():
     price = request.get_json()['price']
     if not price:
         return jsonify({"msg": "order field is empty"}), 400
-    db.place_order(order,price,"Incomplete")    
+    food = db.search_for_order(order)
+    if not food:
+        return jsonify({"Error":"Food is not on the menu."})    
+    db.place_order(order,price,"Incomplete",identity)    
     order = db.get_orders()
     return jsonify({"orders":order})  
 
-@app.route('/user/menu',methods=['GET'])
+@app.route('/menu',methods=['GET'])
 @jwt_required
 def get_menu():
     return jsonify({"Menu":db.get_menu()}) 
 
 
-@app.route('/users/orders',methods=['GET'])
+@app.route('/orders',methods=['GET'])
 @jwt_required
 def view_history(user_id):
     if not user_id:
