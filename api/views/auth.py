@@ -1,9 +1,7 @@
 from flask import Flask, jsonify, request, abort
-from api import app
-from api.models.dbcontroller import DbController
 from api.models.models import User
 import re
-from api import app
+from api import app, db
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity)
@@ -15,7 +13,7 @@ def index():
     return "<h1> Welcome to Fast Food Fast </h1>"
 
 """This route is for user signup/in"""
-@app.route('/v2/auth/signup', methods=['POST'])
+@app.route('/auth/signup', methods=['POST'])
 def signup():
     """{"name":"","password":"","role":""}"""
     if not request.json or not 'name' in request.json or not 'password' in request.json or not 'role' in request.json:
@@ -50,13 +48,13 @@ def signup():
             return jsonify({"msg": "Password too long, max 20"}), 400
 
         new_user = User(name, password, role)
-        DbController().add_user(new_user)
-        return jsonify({"msg":DbController().get_users()})
+        db.add_user(new_user)
+        return jsonify({"msg":db.get_users()})
 
     return jsonify({"msg": "empty field"}), 400
 
 
-@app.route('/v2/auth/login', methods=['POST'])
+@app.route('/auth/login', methods=['POST'])
 def login():
     """{"name":"","password":"","role":""}"""
     if not request.json or not 'name' in request.json or not 'password' in request.json:

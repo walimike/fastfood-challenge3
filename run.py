@@ -1,7 +1,6 @@
 from api import app
-from api.models.dbcontroller import DbController
+from api import db
 
 if __name__ == '__main__':
-    DbController().drop_tables()
-    DbController().create_tables()
+    db.create_tables()
     app.run()

@@ -5,6 +5,7 @@ class Config(object):
     DEBUG = False
     CSRF_ENABLED = True
     SECRET = os.getenv('SECRET')
+    DATABASE_URL = 'postgresql://postgres:1234@localhost:5432/walimike'
 
 
 class DevelopmentConfig(Config):
@@ -16,11 +17,7 @@ class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
     TESTING = True
     DEBUG = True
-
-
-class StagingConfig(Config):
-    """Configurations for Staging."""
-    DEBUG = True
+    DATABASE_URL = 'postgresql://postgres:@localhost:5432/test_db'
 
 
 class ProductionConfig(Config):
@@ -32,6 +29,5 @@ class ProductionConfig(Config):
 app_config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
-    'staging': StagingConfig,
     'production': ProductionConfig,
 }

@@ -1,1 +1,3 @@
-from api import app
+from api.models.dbcontroller import DbController
+
+db = DbController()

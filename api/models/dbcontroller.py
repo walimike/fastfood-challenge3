@@ -1,7 +1,9 @@
 import psycopg2
-
+from urllib.parse import urlparse
+from flask import current_app as app
 
 class DbController:
+	
 	def __init__(self):
 		connection_credentials = """
 				dbname='walimike' user='postgres' password='1234'
