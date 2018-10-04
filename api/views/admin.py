@@ -8,12 +8,18 @@ from api import db
 @app.route('/orders', methods=['GET'])
 @jwt_required
 def get_orders():
-    return jsonify({"orders":db.get_orders()})
+    identity = get_jwt_identity()[0]['username']
+    if identity != 'superman':
+        return jsonify({"Not authorized":"You do not have this access"}),401
+    return jsonify({"orders":db.get_orders})
 
 @app.route('/menu', methods=['POST'])
 @jwt_required
 def add_item_to_menu(): 
-    """{"order":"","price":""}"""  
+    """{"order":"","price":""}""" 
+    identity = get_jwt_identity()[0]['username']
+    if identity != 'superman':
+        return jsonify({"Not authorized":"You do not have this access"}),401
     if not request.get_json() or not 'order' in request.get_json() or not 'price' in request.get_json():
         abort (404)
     order = request.get_json()['order'].strip()
@@ -34,7 +40,7 @@ def get_specific_order(order_id):
     specific_order = db.get_an_order(order_id,order_id)    
     return jsonify({"orders":specific_order})    
 
-@app.route('/v2/admin/orders/<int:order_id>', methods=['PUT'])
+@app.route('/orders/<int:order_id>', methods=['PUT'])
 @jwt_required
 def update_order(order_id):
     if not type(order_id)==int:

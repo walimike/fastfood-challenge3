@@ -47,6 +47,8 @@ def signup():
         if len(password) > 20:
             return jsonify({"msg": "Password too long, max 20"}), 400
 
+        if db.get_user(name):
+            return jsonify({"Error":"User already exists"})
         new_user = User(name, password, role)
         db.add_user(new_user)
         return jsonify({"msg":db.get_users()})
@@ -57,19 +59,22 @@ def signup():
 @app.route('/auth/login', methods=['POST'])
 def login():
     """{"name":"","password":"","role":""}"""
-    if not request.json or not 'name' in request.json or not 'password' in request.json:
-        abort (400)
+    
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
 
-    if not isinstance(request.json.get('name'), str):
-        return jsonify({"msg": "Name must be a string."}), 400
-
-    name = request.get_json()['name'].strip()
-    if not name:
-        return jsonify({"msg": "Name field is empty"}), 400
-    password = str(request.get_json()['password']).strip()
+    username = request.json.get('name', None)
+    password = request.json.get('password', None)
+    if not username:
+        return jsonify({"msg": "Missing username parameter"}), 400
     if not password:
-        return jsonify({"msg": "Password field is empty"}), 400   
-    if not name:
-        abort (404)    
-    access_token = create_access_token(identity=name)
-    return jsonify(access_token=access_token), 200      
+        return jsonify({"msg": "Missing password parameter"}), 400
+
+    new_user = db.get_user(username)
+    
+    if not new_user:
+        return jsonify({"Error":"User does not exist"}),404
+
+    # Identity can be any data that is json serializable
+    access_token = create_access_token(identity=new_user)
+    return jsonify(access_token=access_token), 200

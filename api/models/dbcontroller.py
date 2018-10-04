@@ -34,7 +34,7 @@ class DbController:
 		create_table = "CREATE TABLE IF NOT EXISTS orders \
 			( order_id SERIAL PRIMARY KEY, \
 			user_id INTEGER REFERENCES users(user_id), \
-			foodname VARCHAR(20), price VARCHAR(20), status VARCHAR(10));"
+			foodname VARCHAR(20), price VARCHAR(20), status VARCHAR(10), username VARCHAR(20));"
 		self.cursor.execute(create_table)	
 
 	def add_user(self,new_user):
@@ -52,6 +52,7 @@ class DbController:
 		return orders
 
 	def get_users(self):
+		
 		query = "SELECT row_to_json(row) FROM (SELECT * FROM users) row;"
 		self.cursor.execute(query)
 		users = self.cursor.fetchall()
@@ -69,27 +70,33 @@ class DbController:
 		user = self.cursor.fetchone()
 		return user
 
-	def get_user(self, column, value):
-		query = "SELECT  row_to_json (row) FROM (users WHERE {} = '{}') row;".format(column, value)
+	def get_user(self, value):
+		query = "SELECT row_to_json(row) FROM (SELECT username FROM users WHERE username = '%s') row;" % (value)
 		self.cursor.execute(query)
 		user = self.cursor.fetchone()
 		return user
 
-	def place_order(self, foodname,price,status):
-		query = "INSERT INTO orders (foodname, price, status) VALUES (%s, %s, %s)"
-		self.cursor.execute(query, (foodname, price, status))
+	def place_order(self, foodname,price,status,user):
+		query = "INSERT INTO orders (foodname, price, status,username) VALUES (%s, %s, %s, %s)"
+		self.cursor.execute(query, (foodname, price, status, user))
 
 	def update_status(self, order_id, status):
 		query = "UPDATE orders SET status = '{}' WHERE order_id = '{}';\
 		".format(status, order_id)
 		self.cursor.execute(query)
 
-	def get_history_by_userid(self, userid):
-		query = "SELECT * FROM orders WHERE user_id = '{}';".format(userid)
+	def get_history_by_userid(self, username):
+		query = "SELECT * FROM orders WHERE username = '{}';".format(username)
 		self.cursor.execute(query)
 		history = self.cursor.fetchall()
 		return history
-		
+
+	#def get_user_role(self,name):
+	#	query = "SELECT role FROM users WHERE username = '{}';".format(name)	
+	#	self.cursor.execute(query)
+	#	role = self.cursor.fetchone()
+	#	return role
+
 	def drop_tables(self):
 		query = "DROP TABLE IF EXISTS orders;DROP TABLE IF EXISTS menu;DROP TABLE IF EXISTS users; "
 		self.cursor.execute(query)

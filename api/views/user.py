@@ -27,7 +27,7 @@ def make_order():
     order = db.get_orders()
     return jsonify({"orders":order})  
 
-@app.route('/v2/user/menu',methods=['GET'])
+@app.route('/user/menu',methods=['GET'])
 @jwt_required
 def get_menu():
     return jsonify({"Menu":db.get_menu()}) 
