@@ -50,7 +50,7 @@ def signup():
             return jsonify({"Error":"User already exists"})
         new_user = User(name, password, role)
         db.add_user(new_user)
-        return jsonify({"Message":"You have successfully signed up."})
+        return jsonify({"Message":"You have successfully signed up."}),201
 
     return jsonify({"msg": "empty field"}), 400
 
